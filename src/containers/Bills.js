@@ -1,6 +1,7 @@
 import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
+import { orderByRecent } from '../views/BillsUI.js'
 
 export default class {
   constructor({ document, onNavigate, store, localStorage }) {
@@ -53,6 +54,7 @@ export default class {
             }
           })
           console.log('length', bills.length)
+          console.log(bills.sort(orderByRecent))
         return bills
       })
     }
