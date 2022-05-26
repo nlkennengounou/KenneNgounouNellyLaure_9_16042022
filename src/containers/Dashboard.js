@@ -130,26 +130,50 @@ export default class {
     this.onNavigate(ROUTES_PATH['Dashboard'])
   }
 
+  // Resolution du BUg Hunt sur la consultation des tickets de plusieurs listes dépliées
   handleShowTickets(e, bills, index) {
-    if (this.counter === undefined || this.index !== index) this.counter = 0
-    if (this.index === undefined || this.index !== index) this.index = index
-    if (this.counter % 2 === 0) {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+    const arrow = $(`#arrow-icon${index}`)[0];
+    const container = $(`#status-bills-container${index}`)[0];
+
+    arrow.classList.toggle("open-arrow");
+    if (arrow.classList.contains("open-arrow")) {
+      // it is opened.
+      $(arrow).css({ transform: "rotate(0deg)" });
+      if (container.hasChildNodes()) {
+        const filterBills = filteredBills(bills, getStatus(index));
+        container.innerHTML = cards(filterBills);
+        filterBills.forEach(bill => {
+          $(`#open-bill${bill.id}`).click(e =>
+            this.handleEditTicket(e, bill, bills)
+          );
+        });
+      }
+    container.style.display = "block";
     } else {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html("")
-      this.counter ++
-    }
+    // it is closed
+    $(arrow).css({ transform: "rotate(90deg)" });
+    container.style.display = "none";
+  }
+    
+    // if (this.counter === undefined || this.index !== index) this.counter = 0
+    // if (this.index === undefined || this.index !== index) this.index = index
+    // if (this.counter % 2 === 0) {
+    //   $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
+    //   $(`#status-bills-container${this.index}`)
+    //     .html(cards(filteredBills(bills, getStatus(this.index))))
+    //   this.counter ++
+    // } else {
+    //   $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
+    //   $(`#status-bills-container${this.index}`)
+    //     .html("")
+    //   this.counter ++
+    // }
 
-    bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
+    // bills.forEach(bill => {
+    //   $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+    // })
 
-    return bills
+    // return bills
 
   }
 

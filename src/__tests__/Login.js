@@ -114,6 +114,7 @@ describe("Given that I am a user on login page", () => {
       );
     });
 
+    //  resolution du bug sur les notes de frais
     test("It should renders Bills page", () => {
       const pathname = ROUTES_PATH['Bills']
       const html = ROUTES({
