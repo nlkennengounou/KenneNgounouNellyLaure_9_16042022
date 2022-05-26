@@ -22,24 +22,40 @@ export default class NewBill {
     const fileName = filePath[filePath.length-1]
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
+   
+
     formData.append('file', file)
     formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+    // Resolution du Bug HUNT: empêcher la saisie d'un document qui a une extension différente de jpg, jpeg ou png
+    const fileExtension = file.name.split(".").pop()
+    if(['jpg','jpeg','png'].includes(fileExtension)){
+      /* istanbul ignore next */
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+  
+    } else{
+      let p = document.createElement('p')
+      p.classList.add('error-joinedFileType')
+      p.setAttribute('data-testid', 'errorFormatMessage')
+      p.innerText = "Fichiers acceptés : .JPG, .JPEG, .PNG"
+      e.target.parentNode.append(p)
+      e.target.value = ''
+    }
   }
+
   handleSubmit = e => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
@@ -62,6 +78,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
