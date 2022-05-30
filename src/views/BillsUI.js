@@ -20,15 +20,18 @@ const row = (bill) => {
   }
 // put in utils  
 export function orderByRecent(bill1 , bill2) {
-  return (bill1.date < bill2.date) ? 1 : -1;
+  return (new Date(bill1.date) < new Date(bill2.date)) ? 1 : -1;
 }
 
 const rows = (data) => {
   // Bug Report: la liste des factures doit etre affichée par ordre de date la plus recente
   // return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
   // resolusotion du bug bills ordered
-  const orderedData = data.sort(orderByRecent)
-  return (orderedData && orderedData.length) ? orderedData.map(bill => row(bill)).join("") : ""
+  // const orderedData = data //.sort(orderByRecent)
+  // return (orderedData && orderedData.length) ? orderedData.map(bill => row(bill)).join("") : ""
+  return (data && data.length) ? data
+        .sort(orderByRecent)
+        .map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
